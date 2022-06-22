@@ -34,6 +34,8 @@ class Crawler
             $check_status_url++;
             $url_crawler = $query_crawl->first();
 
+            if (is_null($url_crawler)) continue;
+
             try {
                 CliEcho::infonl("Goto: [$url_crawler->url] - Time : " . Carbon::now()->toDateTimeString());
                 $html = HttpService::get($url_crawler->url);
