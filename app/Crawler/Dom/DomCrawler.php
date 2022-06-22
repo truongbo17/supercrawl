@@ -115,6 +115,7 @@ class DomCrawler
                     'url_hash' => hashUrl($url)
                 ]);
             }
+            return $urls;
         }
     }
 
