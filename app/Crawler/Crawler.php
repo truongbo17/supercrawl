@@ -61,8 +61,8 @@ class Crawler
             $urls = $dom_crawler->getUrlForMultiCrawl();
             echo "\n" . 'Total get dom url in seconds: ' . (microtime(true) - $time_dom_url) . "\n";
 
-//            HttpService::multiRequest($url, $urls, $url_crawler->url);
-            MultipleHttpCrawl::dispatch($url, $urls, $url_crawler->url);
+            HttpService::multiRequest($url, $urls, $url_crawler->url);
+//            MultipleHttpCrawl::dispatch($url, $urls, $url_crawler->url);
 
             $time_get_data = microtime(true);
             if ($url->shouldGetData($url_crawler->url)) {
