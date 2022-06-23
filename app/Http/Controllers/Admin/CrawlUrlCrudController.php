@@ -83,20 +83,13 @@ class CrawlUrlCrudController extends CrudController
             $this->crud->addClause('where', 'data_status', $value);
         });
 
-        $urls = Url::select(['id', 'site'])->get()->toArray();
-        $url_filter = [];
-
-        foreach ($urls as $url) {
-            $url_filter[$url['id']] = $url['site'];
-        }
-//        dd($url_filter);
-
+        $url_filter = Arr::flatten(Url::select('site')->get()->toArray());
         $this->crud->addFilter([
             'type' => 'dropdown',
-            'name' => 'url_id',
+            'name' => 'site',
             'label' => 'Filter Site'
-        ], $url_filter, function ($value) {
-            $this->crud->addClause('where', 'url_id', $value);
+        ], $url_filter, function ($value) use ($url_filter) {
+            $this->crud->addClause('where', 'site', $url_filter[$value]);
         });
     }
 }
