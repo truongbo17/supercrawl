@@ -39,7 +39,6 @@ class Query
         return \DB::transaction(function () {
             $first = CrawlUrl::where('site', $this->site->site)
                 ->where('status', CrawlStatus::INIT)
-                ->orderBy('visited')
 //                ->lock($this->getLockForPopping())
                 ->first();
 
