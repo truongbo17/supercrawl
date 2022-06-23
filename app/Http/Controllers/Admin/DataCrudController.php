@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enum\DataStatus;
+use App\Enum\UploadStatus;
 use App\Http\Requests\DataRequest;
 use App\Models\Data;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -49,12 +50,19 @@ class DataCrudController extends CrudController
                 'type' => 'url_reducer'
             ],
         );
-        CRUD::column('language');
         $this->crud->addColumn(
             [
                 'name' => 'status',
                 'type' => 'select_from_array',
                 'options' => array_flip(DataStatus::asArray()),
+            ],
+        );
+
+        $this->crud->addColumn(
+            [
+                'name' => 'upload_status',
+                'type' => 'select_from_array',
+                'options' => array_flip(UploadStatus::asArray()),
             ],
         );
 
@@ -64,6 +72,14 @@ class DataCrudController extends CrudController
             'label' => 'Filter Status'
         ], array_flip(DataStatus::asArray()), function ($value) {
             $this->crud->addClause('where', 'status', $value);
+        });
+
+        $this->crud->addFilter([
+            'type' => 'dropdown',
+            'name' => 'upload_status',
+            'label' => 'Filter Data Status'
+        ], array_flip(UploadStatus::asArray()), function ($value) {
+            $this->crud->addClause('where', 'upload_status', $value);
         });
 
         /**
