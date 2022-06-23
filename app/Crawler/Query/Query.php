@@ -40,7 +40,7 @@ class Query
             $first = CrawlUrl::where('site', $this->site->site)
                 ->where('status', CrawlStatus::INIT)
                 ->orderBy('visited')
-                ->lock($this->getLockForPopping())
+//                ->lock($this->getLockForPopping())
                 ->first();
 
             if ($first) {

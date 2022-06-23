@@ -53,7 +53,8 @@ class Crawler
 
             $urls = $dom_crawler->getUrlForMultiCrawl();
 
-            MultipleHttpCrawl::dispatch($url, $urls, $url_crawler->url);
+            HttpService::multiRequest($url, $urls, $url_crawler->url);
+//            MultipleHttpCrawl::dispatch($url, $urls, $url_crawler->url);
 
             if ($url->shouldGetData($url_crawler->url)) {
                 $data = $dom_crawler->getData();
