@@ -81,7 +81,7 @@ class UploadDocumentQueue
                         'uploaded_at' => now(),
                     ]);
                     $uploadDocument[] = [
-                        'source' => $data->url,
+                        'source' => preg_replace("/.+\/\/|www.|\..+/", '', $data->url),
                         'content' => $data->title,
                     ];
 
