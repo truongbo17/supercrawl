@@ -16,7 +16,7 @@ class UploadData
     protected int $timeLimit = 60; //per second router rate limit
     protected int $waitTime = 60; //wait time upload then upload max request in per minute
 
-    public function __construct(protected string $host, protected string $token, protected int $limitInput, protected UploadDocumentQueue $queueUpload)
+    public function __construct(protected string $host, protected string $token, protected int $limitInput, protected UploadDocumentQueue $queueUpload, protected int $data_in_request)
     {
         self::$timeStart = Carbon::now()->timestamp;
     }
@@ -31,12 +31,12 @@ class UploadData
                 $this->waitUpload();
             }
 
-            $data = $this->queueUpload->firstPendingData();
+            $data['keywords'] = $this->queueUpload->getLimitData($this->data_in_request);
 
             if (is_null($data)) continue;
 
             try {
-                CliEcho::infonl("Upload data from URL : [" . $data['source'] . "] to Host : [$this->host] - Time : " . Carbon::now()->toDateTimeString());
+                CliEcho::infonl("Upload data to Host : [$this->host] - Time : " . Carbon::now()->toDateTimeString());
 
                 $response = (new GuzzleHttp\Client())->post($this->host, [
                     'headers' => [

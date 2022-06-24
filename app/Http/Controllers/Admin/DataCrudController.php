@@ -77,7 +77,7 @@ class DataCrudController extends CrudController
         $this->crud->addFilter([
             'type' => 'dropdown',
             'name' => 'upload_status',
-            'label' => 'Filter Data Status'
+            'label' => 'Filter Upload Status'
         ], array_flip(UploadStatus::asArray()), function ($value) {
             $this->crud->addClause('where', 'upload_status', $value);
         });

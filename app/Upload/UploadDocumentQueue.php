@@ -8,7 +8,7 @@ use App\Models\Data;
 
 class UploadDocumentQueue
 {
-    protected static ?int $id;
+    protected static ?array $id;
     protected array $where;
 
     public function __construct(bool $reload)
@@ -32,7 +32,7 @@ class UploadDocumentQueue
     {
         return Data::whereIn('upload_status', $this->where)
             ->when(self::$id, function ($query) {
-                $query->where('id', '<>', self::$id);
+                $query->whereNotIn('id', self::$id);
             })
             ->exists();
     }
@@ -64,18 +64,48 @@ class UploadDocumentQueue
         });
     }
 
+    public function getLimitData(int $limit)
+    {
+        return \DB::transaction(function () use ($limit) {
+            $list_data = Data::whereIn('upload_status', $this->where)
+                ->when(self::$id, function ($query) {
+                    $query->where('id', '<>', self::$id);
+                })
+                ->skip(0)->take($limit)->get();
+
+            if ($list_data) {
+                $uploadDocument = [];
+                foreach ($list_data as $data) {
+                    $data->update([
+                        'upload_status' => UploadStatus::INIT,
+                        'uploaded_at' => now(),
+                    ]);
+                    $uploadDocument[] = [
+                        'source' => $data->url,
+                        'content' => $data->title,
+                    ];
+
+                    $this->setId($data->id);
+                }
+
+                return $uploadDocument;
+            }
+            return null;
+        });
+    }
+
     public function setId(int $id)
     {
-        self::$id = $id;
+        self::$id[] = $id;
     }
 
     public function setStatus(int $status)
     {
-        return Data::where('id', $this->getId())
+        return Data::whereIn('id', $this->getId())
             ->update(['upload_status' => $status]);
     }
 
-    public function getId()
+    public function getId(): array
     {
         return self::$id;
     }
