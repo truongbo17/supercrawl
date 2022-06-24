@@ -82,7 +82,7 @@ class UploadData
     public function waitUpload()
     {
         //sleep time
-        sleep($this->waitTime);
+        if ($this->waitTime > 0) sleep($this->waitTime);
 
         //reset time and limit
         self::$timeStart = Carbon::now()->timestamp;
