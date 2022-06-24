@@ -38,7 +38,7 @@ class UploadData extends Command
         $token = $this->option('token') ?? config('upload.token'); //Currently not using token
         $limit = $this->option('limit') ?? 60; // limit request to one minute
         $reload = $this->option('reload');
-        $data_in_request = 1;
+        $data_in_request = 100;
 
         $this->info("Start upload to : $host !!!");
 
