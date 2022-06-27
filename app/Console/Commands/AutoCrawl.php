@@ -16,7 +16,8 @@ class AutoCrawl extends Command
      */
     protected $signature = 'auto:crawl
     {--site= : Site must has in database}
-    {--reset : reset crawl}';
+    {--reset : reset crawl}
+    {--multithreading : Multithreading crawl}';
 
     /**
      * The console command description.
@@ -34,13 +35,14 @@ class AutoCrawl extends Command
     {
         $site = $this->option('site');
         $reset = $this->option('reset');
+        $multithreading = $this->option('multithreading');
 
         if (!Url::where('site', $site)->first() || is_null($site)) {
             $this->error('No site match in database....');
             return self::FAILURE;
         }
 
-        Crawler::run($site, $reset);
+        Crawler::run($site, $reset, $multithreading);
 
         return self::SUCCESS;
     }

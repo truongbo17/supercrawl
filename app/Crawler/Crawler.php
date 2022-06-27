@@ -20,7 +20,7 @@ class Crawler
 {
     public const MAX_CHECK_URL = 100;
 
-    public static function run(string $site, bool $reset = false): void
+    public static function run(string $site, bool $reset = false, bool $multithreading = false): void
     {
         $url = new Url($site);
 
@@ -28,22 +28,18 @@ class Crawler
 
         $check_status_url = 0;
 
-        $query_crawl = new Query($url, $reset);
+        $query_crawl = new Query($url, $reset, $multithreading);
         while ($query_crawl->hasPendingUrls()) {
             $time_start = microtime(true);
             $check_status_url++;
 
-            $time_first = microtime(true);
             $url_crawler = $query_crawl->first();
-            echo "\n" . 'Total get first in seconds: ' . (microtime(true) - $time_first) . "\n";
 
             if (is_null($url_crawler)) continue;
 
             try {
                 CliEcho::infonl("Goto: [$url_crawler->url] - Time : " . Carbon::now()->toDateTimeString());
-                $time_html = microtime(true);
                 $html = HttpService::get($url_crawler->url);
-                echo "\n" . 'Total get html in seconds: ' . (microtime(true) - $time_html) . "\n";
 
                 $url_crawler->status = CrawlStatus::DONE;
             } catch (\Exception $exception) {
@@ -55,16 +51,13 @@ class Crawler
                 }
                 continue;
             }
-            $time_dom_url = microtime(true);
             $dom_crawler = DomCrawler::create($url, $url_crawler->url, $html);
 
             $urls = $dom_crawler->getUrlForMultiCrawl();
-            echo "\n" . 'Total get dom url in seconds: ' . (microtime(true) - $time_dom_url) . "\n";
 
             HttpService::multiRequest($url, $urls, $url_crawler->url);
 //            MultipleHttpCrawl::dispatch($url, $urls, $url_crawler->url);
 
-            $time_get_data = microtime(true);
             if ($url->shouldGetData($url_crawler->url)) {
                 $data = $dom_crawler->getData();
                 if (StoreData::store($url_crawler->url, $data)) {
@@ -74,7 +67,6 @@ class Crawler
                 }
             }
             $url_crawler->updateStatus();
-            echo "\n" . 'Total get data url in seconds: ' . (microtime(true) - $time_get_data) . "\n";
 
 
             echo "\n" . 'Total crawl time in seconds: ' . (microtime(true) - $time_start) . "\n";

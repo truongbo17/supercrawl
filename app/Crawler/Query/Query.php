@@ -14,7 +14,7 @@ use Vuh\CliEcho\CliEcho;
 
 class Query
 {
-    public function __construct(protected AbstractUrl $site, protected bool $reset)
+    public function __construct(protected AbstractUrl $site, protected bool $reset, protected bool $multithreading)
     {
         if ($reset) $this->reset();
 
@@ -39,7 +39,9 @@ class Query
         return \DB::transaction(function () {
             $first = CrawlUrl::where('site', $this->site->site)
                 ->where('status', CrawlStatus::INIT)
-//                ->lock($this->getLockForPopping())
+                ->when($this->multithreading, function ($q) {
+                    $q->lock($this->getLockForPopping());
+                })
                 ->first();
 
             if ($first) {
@@ -56,6 +58,7 @@ class Query
 
     protected function getLockForPopping(): bool|string
     {
+        dd(1);
         $databaseEngine = \DB::getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME);
         $databaseVersion = \DB::getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
