@@ -96,7 +96,7 @@ class DomCrawler
 
         $urls = array_unique(array_filter($urls));
 
-        if ($multi_crawl) {
+        if ($multi_crawl && count($urls) > 0) {
             list($array_save_to_database, $array_for_multi_crawl) = array_chunk($urls, ceil(count($urls) / 2));
 
             foreach ($array_save_to_database as $url) {
