@@ -96,7 +96,7 @@ class DomCrawler
 
         $urls = array_unique(array_filter($urls));
 
-        if ($multi_crawl && count($urls) > 0) {
+        if ($multi_crawl && count($urls) > 1) {
             list($array_save_to_database, $array_for_multi_crawl) = array_chunk($urls, ceil(count($urls) / 2));
 
             foreach ($array_save_to_database as $url) {
@@ -107,7 +107,7 @@ class DomCrawler
                     'url_hash' => hashUrl($url)
                 ]);
             }
-            return $array_for_multi_crawl ?? [];
+            return $array_for_multi_crawl;
         } else {
             foreach ($urls as $url) {
                 CrawlUrl::create([
@@ -117,7 +117,7 @@ class DomCrawler
                     'url_hash' => hashUrl($url)
                 ]);
             }
-            return $urls;
+            return [];
         }
     }
 
