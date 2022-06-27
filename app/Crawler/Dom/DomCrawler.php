@@ -87,6 +87,8 @@ class DomCrawler
                 if ($this->ignorePageChild($item)) continue;
             }
 
+            if ($this->exists($item)) continue;
+
             if ((!$this->url->shouldCrawl($item) && !$this->url->shouldGetData($item)) || $this->skipUrl($item)) continue;
 
             $urls[] = $item;
@@ -134,5 +136,10 @@ class DomCrawler
     {
         if (str_starts_with($url, $this->current_url)) return true;
         return false;
+    }
+
+    public function exists(string $url): bool
+    {
+        return CrawlUrl::where('url_hash', hashUrl($url))->exists();
     }
 }
