@@ -107,7 +107,7 @@ class DomCrawler
                     'url_hash' => hashUrl($url)
                 ]);
             }
-            return $array_for_multi_crawl;
+            return $array_for_multi_crawl ?? [];
         } else {
             foreach ($urls as $url) {
                 CrawlUrl::create([
