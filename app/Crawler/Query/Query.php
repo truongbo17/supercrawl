@@ -58,7 +58,6 @@ class Query
 
     protected function getLockForPopping(): bool|string
     {
-        dd(1);
         $databaseEngine = \DB::getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME);
         $databaseVersion = \DB::getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
